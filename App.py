@@ -1,13 +1,9 @@
 from tkinter import *
-from tkinter import ttk
-import cv2
-from firebase import firebase
-from PIL import Image
 from PIL import ImageTk
 from tkinter import messagebox
-from Staff import staff
-from Camera1 import Check_car_in
-from Camera2 import Check_car_out
+from Firebase import database
+from Camera import QL_Camera
+from Camera_client import camera_client
 class Login:
     def __init__(self, root):
         self.root = root
@@ -32,108 +28,31 @@ class Login:
         # Button
         submit = Button(Frame_login, command=self.check_function, text="Login", bd=0, font=("Goudy old style", 15),bg="#6162FF", fg="white").place(x=90, y=310, width=180, height=40)
         # Firebase
-        self.firebase = firebase.FirebaseApplication('https://test1-6422a-default-rtdb.firebaseio.com', None)
+        self.firebase = database()
         self.login_path = 'Login'
+
     def check_function(self):
         if self.username.get() == "" or self.password.get() == "":
             messagebox.showerror("Error", "Vui long nhap tk mk ", parent=self.root)
         else:
-            result = self.firebase.get(self.login_path, None)
-            found = False
-            for key in result.keys():
-                if result[key]['username'] == self.username.get() and result[key]['password'] == self.password.get():
-                    found = True
-                    break
+            found, user_role = self.firebase.check_login(self.username.get(), self.password.get())
+            print(type(user_role))
+            print(user_role)
             if found:
-                # messagebox.showinfo("Welcome", f"Chao`{self.username.get()}")
-                self.open_new_screen()
+                if user_role == "1":
+                    self.open_new_screen_manager()
+                else:
+                    self.open_new_screen_client()
             else:
                 messagebox.showerror("Error", "tk hoac mk sai", parent=self.root)
-
-    def open_new_screen(self):
+    def open_new_screen_manager(self):
         self.root.withdraw()  # Ẩn cửa sổ hi1ện tại
         self.new_window = Toplevel(self.root)
-        self.app = Dashboard(self.new_window)
-
-class Dashboard:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Dashboard")
-        self.root.geometry("1199x600+100+50")
-        self.root.resizable(False, False)
-        self.root.title("Danh mục quản lí")
-        # Form Dashboard
-        Frame_dashboard = Frame(self.root, bg="white")
-        Frame_dashboard.place(x=0, y=0, width=1199, height=600)
-
-        title = Label(Frame_dashboard, text="Quản lí bãi đổ xe", font=("Impact", 35, "bold"), fg="#6162FF", bg="white",
-                      bd=0, padx=10, pady=5, borderwidth=0)
-        title.place(x=400, y=20)
-        #khung title
-        icon = Image.open("Picture/border.png")
-        icon = icon.resize((450, 40), Image.ANTIALIAS)
-        self.icon_image = ImageTk.PhotoImage(icon)
-        icon_label = Label(Frame_dashboard, image=self.icon_image, bg="white")
-        icon_label.place(x=355, y=75)
-        #icon1
-        icon1 = Image.open("Picture/moto.png")
-        icon1 = icon1.resize((80, 60), Image.ANTIALIAS)
-        self.icon_image1 = ImageTk.PhotoImage(icon1)
-        icon_label1 = Label(Frame_dashboard, image=self.icon_image1, bg="white")
-        icon_label1.place(x=150, y=115)
-        #icon2
-        icon2 = Image.open("Picture/moto.png")
-        icon2 = icon2.resize((80, 60), Image.ANTIALIAS)
-        self.icon_image2 = ImageTk.PhotoImage(icon2)
-        icon_label2 = Label(Frame_dashboard, image=self.icon_image2, bg="white")
-        icon_label2.place(x=430, y=115)
-        # icon3
-        icon3 = Image.open("Picture/moto.png")
-        icon3 = icon3.resize((80, 60), Image.ANTIALIAS)
-        self.icon_image3 = ImageTk.PhotoImage(icon3)
-        icon_label2 = Label(Frame_dashboard, image=self.icon_image3, bg="white")
-        icon_label2.place(x=730, y=115)
-        # icon4
-        icon4 = Image.open("Picture/barrier.png")
-        icon4 = icon4.resize((100, 80), Image.ANTIALIAS)
-        self.icon_image4 = ImageTk.PhotoImage(icon4)
-        icon_label2 = Label(Frame_dashboard, image=self.icon_image4, bg="white")
-        icon_label2.place(x=960, y=95)
-        logout = Button(Frame_dashboard, text="Logout", bd=0, font=("Goudy old style", 15),bg="#6162FF", fg="white", command=self.logout_function).place(x=1050, y=30, width=100, height=40)
-        form = Label(Frame_dashboard, text="", font=("Arial", 20), bg="white", bd=2, highlightthickness=2,highlightbackground="gray").place(x=100, y=200, width=980, height=300)
-        style = ttk.Style()
-        style.map("TButton", foreground=[('active', '#6162FF')], background=[('active', 'gray')])
-        style.configure("TButton", padding=6, relief="flat", font=("Goudy old style", 15), background="#6162FF",
-                        foreground="white")
-        style.configure("TButton", borderwidth=0, focuscolor="none", highlightthickness=0, bordercolor="none")
-        style.configure("TButton", bordercolor="none", focuscolor="none", borderwidth=0)
-        style.configure("TButton", bordercolor="none", focuscolor="none", borderwidth=0, relief="flat",
-                        background="#6162FF", foreground="white", padding=6)
-        style.configure("TButton", bordercolor="none", focuscolor="none", borderwidth=0, relief="flat",
-                        background="#6162FF", foreground="orange", padding=6, borderradius=80)
-
-        QLxevao = ttk.Button(Frame_dashboard, command=self.tranfer_BS, text="QL Xe vào").place(x=130, y=220,
-                                                                                                  width=160, height=40)
-        AddNhanvien = ttk.Button(Frame_dashboard, text="Thêm Nhân Viên").place(x=530, y=220, width=160, height=40)
-        QLxera = ttk.Button(Frame_dashboard,command=self.tranfer_BS1, text="QL Xe ra").place(x=530, y=320, width=160, height=40)
-        QLNhanvien = ttk.Button(Frame_dashboard ,command=self.tranfer_staff,text="QL Nhân Viên").place(x=880, y=220, width=160, height=40)
-    def tranfer_BS(self):
-        self.open_new_screenBS()
-    def open_new_screenBS(self):
+        self.app = QL_Camera(self.new_window)
+    def open_new_screen_client(self):
+        self.root.withdraw()  # Ẩn cửa sổ hi1ện tại
         self.new_window = Toplevel(self.root)
-        self.app = Check_car_in(self.new_window)
-    def tranfer_BS1(self):
-        self.open_new_screenBS1()
-    def open_new_screenBS1(self):
-        self.new_window = Toplevel(self.root)
-        self.app = Check_car_out(self.new_window)
-    def tranfer_staff(self):
-        self.open_new_screenstaff()
-    def open_new_screenstaff(self):
-        self.new_window = Toplevel(self.root)
-        self.app = staff(self.new_window)
-    def logout_function(self):
-        root.destroy()
+        self.app = camera_client(self.new_window)
 root = Tk()
 obj = Login(root)
 root.mainloop()
