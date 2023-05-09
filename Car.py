@@ -4,10 +4,10 @@ from Firebase import database
 from PIL import Image
 from PIL import ImageTk
 
-class car: # class quản lí nhân viên
+class car: # class quản lí car
     def __init__(self, root):
         self.root = root
-        self.root.title("Quản lí sinh viên")
+        self.root.title("Quản lí Xe")
         self.root.geometry("1200x500")
         self.root.resizable(False, False)
         # Header
@@ -53,7 +53,7 @@ class car: # class quản lí nhân viên
 
         # Lấy thông tin danh sách xe đăng kí
         self.firebase = database()
-        car_manager_info =self.firebase.get_car_manager_info()
+        car_manager_info = self.firebase.get_car_manager_info()
 
         for info in car_manager_info:
             tree.insert("", END, values=info)
@@ -61,6 +61,14 @@ class car: # class quản lí nhân viên
         scrollbar = ttk.Scrollbar(table_frame, orient=VERTICAL, command=tree.yview)
         scrollbar.pack(side=RIGHT, fill=Y)
         tree.config(yscrollcommand=scrollbar.set)
+        self.update_car_info()
+    def update_car_info(self):
+        car_manager_info = self.firebase.get_car_manager_info()
+        self.tree.delete(*self.tree.get_children())
+        for info in car_manager_info:
+            self.tree.insert("", END, values=info)
+         # Schedule the next update in 3 seconds
+        self.root.after(3000, self.update_car_info)
     def logout_function(self):
         self.root.destroy()
 # root = Tk()

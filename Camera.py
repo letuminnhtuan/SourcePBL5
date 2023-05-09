@@ -5,8 +5,8 @@ import threading
 import tkinter as tk
 from Dashboard import db
 class QL_Camera:
-    def __init__(self, root):
-        self.root = root
+    def __init__(self, master):
+        self.root = master
         self.root.title("Quản lí bãi xe")
         self.root.geometry("1500x800")
         self.root.resizable(False, False)

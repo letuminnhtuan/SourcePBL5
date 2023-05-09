@@ -3,7 +3,7 @@ from tkinter import ttk
 from PIL import Image
 from PIL import ImageTk
 from Car import car
-
+from Regis import Form
 class db:
     def __init__(self, root):
         self.root = root
@@ -63,7 +63,7 @@ class db:
         # Button quản lí doanh thu
         ttk.Button(Frame_dashboard, text="QL Doanh Thu").place(x=130, y=220,width=160, height=40)
         # Button đăng kí xe
-        ttk.Button(Frame_dashboard, text="Đăng kí xe",command=self.tranfer_Regis()).place(x=530, y=220, width=160, height=40)
+        ttk.Button(Frame_dashboard, text="Đăng kí xe",command=self.tranfer_Regis).place(x=530, y=220, width=160, height=40)
         # Button quản lí xe
         ttk.Button(Frame_dashboard,text="QL Xe",command=self.tranfer_QLcar).place(x=880, y=220, width=160, height=40)
 
@@ -73,12 +73,12 @@ class db:
     def open_new_QLcar(self):
         self.new_window = Toplevel(self.root)
         self.app = car(self.new_window)
-    # Chuyển sang form đăng kí
+    #Chuyển sang form đăng kí
     def tranfer_Regis(self):
         self.open_new_Regis()
     def open_new_Regis(self):
         self.new_window = Toplevel(self.root)
-        self.app = car(self.new_window)
+        self.app = Form(self.new_window)
     def logout_function(self):
         self.root.destroy()
 #
