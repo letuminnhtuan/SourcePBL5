@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 import threading
 import tkinter as tk
 from Dashboard import db
+from XuLi import *
 class QL_Camera:
     def __init__(self, master):
         self.root = master
@@ -67,7 +68,7 @@ class QL_Camera:
         self.thread_left.start()
 
         # ---------- KHỞI TẠO CAMERA PHẢI --------------
-        self.cap_right = cv2.VideoCapture(0) # Khởi tạo biến cap_right để lấy camera bên phải
+        self.cap_right = cv2.VideoCapture(1) # Khởi tạo biến cap_right để lấy camera bên phải
         # --------- KHỞI TẠO THREAD ĐỂ CHẠY HÀM Updata_camera_right-----------
         self.thread_right = threading.Thread(target=self.update_camera_right)
         self.thread_right.daemon = True
@@ -108,6 +109,8 @@ class QL_Camera:
         self.bienso.place(x=270, y=720, width=320, height=35)
     # Hàm cập nhật camera xe vào lên giao điện
     def update_camera_left(self):
+        data_thread = threading.Thread(target=data_handler, args=(arData, self.cap_left,))
+        data_thread.start()
         while True: # Lặp vô hạn để lấy hình ảnh từ camera
             ret, frame = self.cap_left.read() # Gọi phương thức read của đối tượng cap_left ở trên để lấy hình ảnh từ camera trái
             if ret: # Kiểm tra xem có lấy được ảnh từ camera không
@@ -139,6 +142,6 @@ class QL_Camera:
     def logout_function(self):
         self.root.destroy()
 #
-# root = Tk()
-# obj = QL_Camera(root)
-# root.mainloop()
+root = Tk()
+obj = QL_Camera(root)
+root.mainloop()
