@@ -1,13 +1,22 @@
 #include <Servo.h>
+#include <RFID.h>
 
+#define SS_PIN 53
+#define RST_PIN 5
 // Biến
 int  n_slot = 4;
 int ledPins[] = {2, 3, 4, 5};
 int cbPins[] = {8, 9, 10, 11};
-Servo servo_start;
-int servoPin = 13;
-int cbPin = 12;
-int out = 1;
+int servoPin = 7;
+
+// Phần cứng
+RFID rfid(SS_PIN, RST_PIN);
+Servo servo_in;
+
+byte listRFID[][5] = {
+  {0xF7, 0xF5, 0xDD, 0xD7, 0x8},
+  {0x45, 0x8E, 0xEB, 0x2A, 0xA}
+};
 
 //  Thiết lập cảm biến và led cho vị trí đỗ xe
 void SetUpSlot(){
@@ -17,11 +26,12 @@ void SetUpSlot(){
   }
 }
 
-// Thiết lập cảm biến, Servo cho cổng vào
+// Thiết lập RFID, Servo cho cổng vào
 void SetUpGate(){
-  servo_start.attach(servoPin);
-  pinMode(cbPin, INPUT);
-  servo_start.write(90);
+  servo_in.attach(servoPin);
+  servo_in.write(175);
+  SPI.begin();
+  rfid.init();
 }
 
 // Kiểm tra các vị trí trong bãi đỗ xe
@@ -37,39 +47,32 @@ void Check_Slot(){
   }
 }
 
-// Kiểm tra xe đi vào và chụp ảnh nếu có
+// Kiểm tra lúc xe đi vào
 void Check_In(){
-  /* 
-  - Khi xe vào, cảm biến đọc
-  - Gửi tín hiệu qua python và nhận dạng biển số
-  - Trả dữ liệu biển số về arduino và mở cửa
-  + Vấn đề: Lặp quá nhiều dẫn đến quá tải
-  */
-  int check = digitalRead(cbPin);
-  // Gửi tín hiệu chụp ảnh
-  Serial.print(check);
-  if(check == 0){
-    if(out == 1){
-      // Nhận tín hiệu
-      String serialData = "";
-      if (Serial.available() > 0) {  
-        serialData = Serial.readStringUntil('\r');
-        Serial.print(serialData);
+  // Kiểm tra thẻ
+  if (rfid.isCard()) {
+    if (rfid.readCardSerial()){
+      // Kiểm tra thẻ xe
+      for (int i = 0; i < sizeof(listRFID)/sizeof(listRFID[0]); i++) {
+        // Tìm được thẻ
+        if (memcmp(listRFID[i], rfid.serNum, 5) == 0) {
+          // Gửi tín hiệu chụp ảnh và nhận diện
+          Serial.print("1");
+          // Nhận lại tín hiệu
+          while(Serial.available() == 0){}
+          char incomingByte = Serial.read();
+          // kiểm tra tín hiệu
+          if (incomingByte == '1'){
+            servo_in.write(83);
+            delay(3000);
+            servo_in.write(175);
+          }
+          break;
+        }
       }
-      // Khi nhận được biển số -> mở cổng
-      if(serialData.length() > 0){
-        servo_start.write(180);
-        delay(3000);
-        servo_start.write(90);
-      }
-      out = 0;
-    }
-    // Thoát
-    check = digitalRead(cbPin);
-    if(check == 0){
-      out = 1;
     }
   }
+  delay(1000);
 }
 
 void setup() {
