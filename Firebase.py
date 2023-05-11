@@ -63,8 +63,41 @@ class database:
             "Total-money": total_money
         }
         self.fb.post('/Car-management', car_data)
-    
 
+    def get_cars(self):
+        return self.fb.get('/LP_Car', '')
 
+    def check_license_plate(self, license_plate):
+        data = self.get_cars()
+        if data is not None:
+            for car in data:
+                if car is not None and car['L_Plate'] == license_plate:
+                    return True
+        return False
 
+    # Trả về thông tin với biển số tương ứng: tên người, cccd,
+        # Lấy thông tin cột LP_Car và thông tin cột Car-management
+        # Ktra xem ID_owner tương ứng với L_Plate trong cột LP_Car và lấy thông tin car trong cột Car-management với ID_owner tương ứng đó
+    def get_car_info(self, license_plate):
+        lp_data = self.fb.get('/LP_Car', '')
+        lp_data = list(filter(None, lp_data))
+        car_data = self.fb.get('/Car-management', '')
+        car_data = list(filter(None, car_data))
+        car_info = {}
 
+        if lp_data is not None and car_data is not None:
+            for lp_dict in lp_data:
+                if lp_dict['L_Plate'] == license_plate:
+                    id_owner = lp_dict['ID_owner']
+                    for car_dict in car_data:
+                        if str(car_dict.get('ID_owner')) == id_owner:
+                            car_info = car_dict
+                            car_info['L_Plate'] = license_plate
+                            break
+        return car_info
+        # print(lp_data)
+        # print("\n")
+        # print(car_data)
+    def get(self):
+        lp_data = self.fb.get('/LP_Car', '')
+        return lp_data

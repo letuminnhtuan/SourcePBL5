@@ -4,7 +4,6 @@ from PIL import Image, ImageTk
 import threading
 import tkinter as tk
 from Dashboard import db
-from XuLi import *
 class camera_client:
     def __init__(self, root):
         self.root = root
@@ -104,8 +103,6 @@ class camera_client:
         self.bienso = Entry(self.frame_left, font=("Goudy old style", 7), bg="#E7E6E6", state="normal")
         self.bienso.place(x=270, y=720, width=320, height=35)
     def update_camera_left(self):
-        data_thread = threading.Thread(target=data_handler, args=(arData, self.cap_left,))
-        data_thread.start()
         while True:
             # Lấy hình ảnh từ camera
             ret, frame = self.cap_left.read()

@@ -82,6 +82,6 @@ class db:
     def logout_function(self):
         self.root.destroy()
 #
-# root = Tk()
-# obj = db(root)
-# root.mainloop()
+root = Tk()
+obj = db(root)
+root.mainloop()

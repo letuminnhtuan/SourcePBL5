@@ -34,33 +34,33 @@ class car: # class quản lí car
         # Columns
         # Columns
         columns = ("ID", "Tên chủ", "SDT", "CCCD", "Time-register", "Period-time", "Tổng tiền")
-        tree = ttk.Treeview(table_frame, columns=columns, show="headings", height=15)
-        tree.pack(side=LEFT)
-        tree.column("ID", width=50, anchor=CENTER)
-        tree.column("Tên chủ", width=200, anchor=CENTER)
-        tree.column("SDT", width=150, anchor=CENTER)
-        tree.column("CCCD", width=150, anchor=CENTER)
-        tree.column("Time-register", width=150, anchor=CENTER)
-        tree.column("Period-time", width=150, anchor=CENTER)
-        tree.column("Tổng tiền", width=150, anchor=CENTER)
-        tree.heading("ID", text="ID")
-        tree.heading("Tên chủ", text="Tên chủ")
-        tree.heading("SDT", text="SDT")
-        tree.heading("CCCD", text="CCCD")
-        tree.heading("Time-register", text="Time-register")
-        tree.heading("Period-time", text="Period-time")
-        tree.heading("Tổng tiền", text="Tổng tiền")
+        self.tree = ttk.Treeview(table_frame, columns=columns, show="headings", height=15)
+        self.tree.pack(side=LEFT)
+        self.tree.column("ID", width=50, anchor=CENTER)
+        self.tree.column("Tên chủ", width=200, anchor=CENTER)
+        self.tree.column("SDT", width=150, anchor=CENTER)
+        self.tree.column("CCCD", width=150, anchor=CENTER)
+        self.tree.column("Time-register", width=150, anchor=CENTER)
+        self.tree.column("Period-time", width=150, anchor=CENTER)
+        self.tree.column("Tổng tiền", width=150, anchor=CENTER)
+        self.tree.heading("ID", text="ID")
+        self.tree.heading("Tên chủ", text="Tên chủ")
+        self.tree.heading("SDT", text="SDT")
+        self.tree.heading("CCCD", text="CCCD")
+        self.tree.heading("Time-register", text="Time-register")
+        self.tree.heading("Period-time", text="Period-time")
+        self.tree.heading("Tổng tiền", text="Tổng tiền")
 
         # Lấy thông tin danh sách xe đăng kí
         self.firebase = database()
         car_manager_info = self.firebase.get_car_manager_info()
 
         for info in car_manager_info:
-            tree.insert("", END, values=info)
+            self.tree.insert("", END, values=info)
         # Scrollbar
-        scrollbar = ttk.Scrollbar(table_frame, orient=VERTICAL, command=tree.yview)
+        scrollbar = ttk.Scrollbar(table_frame, orient=VERTICAL, command=self.tree.yview)
         scrollbar.pack(side=RIGHT, fill=Y)
-        tree.config(yscrollcommand=scrollbar.set)
+        self.tree.config(yscrollcommand=scrollbar.set)
         self.update_car_info()
     def update_car_info(self):
         car_manager_info = self.firebase.get_car_manager_info()
@@ -68,7 +68,7 @@ class car: # class quản lí car
         for info in car_manager_info:
             self.tree.insert("", END, values=info)
          # Schedule the next update in 3 seconds
-        self.root.after(3000, self.update_car_info)
+        self.root.after(2000, self.update_car_info)
     def logout_function(self):
         self.root.destroy()
 # root = Tk()
