@@ -5,6 +5,8 @@ import threading
 import tkinter as tk
 from Dashboard import db
 from Firebase import database
+from Regis import Form
+from XuLi import *
 class QL_Camera:
     def __init__(self, master):
         self.root = master
@@ -109,6 +111,8 @@ class QL_Camera:
         self.bienso.place(x=270, y=720, width=320, height=35)
     # Hàm cập nhật camera xe vào lên giao điện
     def update_camera_left(self):
+        data_thread = threading.Thread(target=self.data_handler, args=(arData, self.cap_left,))
+        data_thread.start()
         while True: # Lặp vô hạn để lấy hình ảnh từ camera
             ret, frame = self.cap_left.read() # Gọi phương thức read của đối tượng cap_left ở trên để lấy hình ảnh từ camera trái
             if ret: # Kiểm tra xem có lấy được ảnh từ camera không
@@ -131,6 +135,23 @@ class QL_Camera:
                 # Hiển thị hình ảnh trong Label ( cập nhật hình ảnh mới nhật lên label )
                 self.label_camera_right.configure(image=image)
                 self.label_camera_right.image = image
+    def data_handler(self, arData, cap):
+        while True:
+            if arData.in_waiting == 0:
+                continue
+            else:
+                data = str(arData.read(), 'utf')
+                if data == '1':
+                    _, img = cap.read()
+                    num_plate = plate(img)
+                    num = list(num_plate)
+                    print(num)
+                    if(len(num) != 0):
+                        SendData('1')
+                        self.tranfer_Regis(num[0])
+                    else:
+                        SendData('0')
+                time.sleep(1)
     # Hàm chuyển sang trang Quản lí
     def tranfer_DB(self):
         self.open_new_DB()
@@ -139,6 +160,11 @@ class QL_Camera:
         self.app = db(self.new_window)
     def logout_function(self):
         self.root.destroy()
+    def tranfer_Regis(self, plate):
+        self.open_new_Regis(plate)
+    def open_new_Regis(self, plate):
+        self.new_window = Toplevel(self.root)
+        self.app = Form(plate, self.new_window)       
 #
 # root = Tk()
 # obj = QL_Camera(root)

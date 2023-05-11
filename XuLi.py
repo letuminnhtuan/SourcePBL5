@@ -12,7 +12,7 @@ def detect(img):
     yolo_LP_detect = torch.hub.load('yolov5', 'custom', path='E:\\PBL5\\SourceCodePBl5\\DetectPlate\\model\\LP_detector.pt', force_reload=True, source='local')
     plates = yolo_LP_detect(img, size=640)
     list_plates = plates.pandas().xyxy[0].values.tolist()
-
+    
     return list_plates
 
 def plate(img):
@@ -51,26 +51,27 @@ def SendData(data):
     arData.write(data.encode('utf-8'))
 
 # Define a function to receive and send data
-def data_handler(arData, cap):
-    while True:
-        if arData.in_waiting == 0:
-            continue
-        else:
-            data = str(arData.read(), 'utf')
-            if data == '1':
-                _, img = cap.read()
-                print(plate(img))
-                SendData('1')
-            time.sleep(1)
+# def data_handler(arData, cap):
+#     while True:
+#         if arData.in_waiting == 0:
+#             continue
+#         else:
+#             data = str(arData.read(), 'utf')
+#             if data == '1':
+#                 _, img = cap.read()
+#                 print(plate(img))
+#                 SendData('1')
+
+#             time.sleep(1)
 
 # Define a function to display camera images
-def display_camera(cap):
-    while True:
-        _, image = cap.read()
-        cv2.imshow('show', image)
-        if cv2.waitKey(1) == ord('q'):
-            cv2.destroyAllWindows()
-            break
+# def display_camera(cap):
+#     while True:
+#         _, image = cap.read()
+#         cv2.imshow('show', image)
+#         if cv2.waitKey(1) == ord('q'):
+#             cv2.destroyAllWindows()
+#             break
 
 # Create a VideoCapture object to capture video from the default camera
 # cap = cv2.VideoCapture(0)

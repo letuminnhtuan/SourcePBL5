@@ -4,8 +4,9 @@ from datetime import datetime
 from tkinter import messagebox
 
 class Form(Frame):
-    def __init__(self, master=None):
+    def __init__(self, license_plate, master=None):
         super().__init__(master)
+        self.license_plate = license_plate
         self.master = master
         self.master.title("Register")
         self.pack()
@@ -61,9 +62,9 @@ class Form(Frame):
         #Kết nối đến Firebase
         self.db = database()
 
-        license_plate = "22F51411"
-        if(self.db.check_license_plate(license_plate)):
-            list_info = self.db.get_car_info(license_plate)
+        # license_plate = "22F51411"
+        if(self.db.check_license_plate(self.license_plate)):
+            list_info = self.db.get_car_info(self.license_plate)
             self.entry_owner.insert(0,list_info['Owner-name'])
             self.entry_owner.configure(state='readonly')
             self.entry_id.insert(0,list_info['ID_owner'])
@@ -78,7 +79,7 @@ class Form(Frame):
             # chỉ load biển số
             self.entry_lp.configure(state='normal')
             self.entry_lp.delete(0, 'end')
-            self.entry_lp.insert(0, license_plate)
+            self.entry_lp.insert(0, self.license_plate)
             self.entry_lp.configure(state='readonly')
         # print(self.db.get_car_info(license_plate))
         # print(self.db.get())
@@ -141,6 +142,6 @@ class Form(Frame):
             self.db.fb.put('/LP_Car',id2,lp_car)
             self.db.fb.put('/Car-management', id1, car_data)
             messagebox.showinfo("Success", "Đã thêm dữ liệu thành công.")
-root = Tk()
-obj = Form(root)
-root.mainloop()
+# root = Tk()
+# obj = Form("42K51251", root)
+# root.mainloop()
