@@ -36,8 +36,6 @@ class Login:
             messagebox.showerror("Error", "Vui long nhap tk mk ", parent=self.root)
         else:
             found, user_role = self.firebase.check_login(self.username.get(), self.password.get())
-            print(type(user_role))
-            print(user_role)
             if found:
                 if user_role == "1":
                     self.open_new_screen_manager()
@@ -51,6 +49,7 @@ class Login:
         self.app = QL_Camera(self.new_window)
     def open_new_screen_client(self):
         self.root.withdraw()  # Ẩn cửa sổ hi1ện tại
+
         self.new_window = Toplevel(self.root)
         self.app = camera_client(self.new_window)
 root = Tk()
