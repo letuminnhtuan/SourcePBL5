@@ -88,12 +88,15 @@ class database:
         if lp_data is not None and car_data is not None:
             for lp_dict in lp_data:
                 if lp_dict['L_Plate'] == license_plate:
-                    id_owner = lp_dict['ID_owner']
-                    for car_dict in car_data:
-                        if str(car_dict.get('ID_owner')) == id_owner:
-                            car_info = car_dict
-                            car_info['L_Plate'] = license_plate
-                            break
+                    if 'ID_owner' not in lp_dict:
+                        print("Không có khóa ID_owner")
+                    else:
+                        id_owner = lp_dict['ID_owner']
+                        for car_dict in car_data:
+                            if str(car_dict.get('ID_owner')) == id_owner:
+                                car_info = car_dict
+                                car_info['L_Plate'] = license_plate
+                                break
         return car_info
         # print(lp_data)
         # print("\n")

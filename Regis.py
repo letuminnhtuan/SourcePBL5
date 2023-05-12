@@ -62,7 +62,7 @@ class Form(Frame):
         #Kết nối đến Firebase
         self.db = database()
 
-        # license_plate = "22F51411"
+        license_plate = "22F51411"
         if(self.db.check_license_plate(self.license_plate)):
             list_info = self.db.get_car_info(self.license_plate)
             self.entry_owner.insert(0,list_info['Owner-name'])
@@ -82,7 +82,7 @@ class Form(Frame):
             self.entry_lp.insert(0, self.license_plate)
             self.entry_lp.configure(state='readonly')
         # print(self.db.get_car_info(license_plate))
-        # print(self.db.get())
+        print(self.db.get())
     def save_data(self):
         # Connect firebase
         result = self.db.fb.get('/Car-management', None)
@@ -142,6 +142,7 @@ class Form(Frame):
             self.db.fb.put('/LP_Car',id2,lp_car)
             self.db.fb.put('/Car-management', id1, car_data)
             messagebox.showinfo("Success", "Đã thêm dữ liệu thành công.")
-# root = Tk()
-# obj = Form("42K51251", root)
-# root.mainloop()
+            self.master.destroy()
+root = Tk()
+obj = Form("42K51251", root)
+root.mainloop()

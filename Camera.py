@@ -148,6 +148,7 @@ class QL_Camera:
                     print(num)
                     if(len(num) != 0):
                         SendData('1')
+
                         self.tranfer_Regis(num[0])
                     else:
                         SendData('0')

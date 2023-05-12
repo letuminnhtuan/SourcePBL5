@@ -3,7 +3,7 @@ from tkinter import ttk
 from PIL import Image
 from PIL import ImageTk
 from Car import car
-from Regis import Form
+from Register import regis
 class db:
     def __init__(self, root):
         self.root = root
@@ -78,10 +78,10 @@ class db:
         self.open_new_Regis()
     def open_new_Regis(self):
         self.new_window = Toplevel(self.root)
-        self.app = Form(self.new_window)
+        self.app = regis(self.new_window)
     def logout_function(self):
         self.root.destroy()
 #
-# root = Tk()
-# obj = db(root)
-# root.mainloop()
+root = Tk()
+obj = db(root)
+root.mainloop()
