@@ -30,28 +30,6 @@ class database:
                     total_money = item.get('Total-money')
                     car_manager_info.append((id, name, email, phone, time_regis, period_time, total_money))
         return car_manager_info
-    # Hàm lấy thông tin xe đăng kí
-    # def get_car_manager_info(self):
-    #     data = self.fb.get('/Car-management', '')
-    #     car_manager_info = []
-    #     if data is not None:
-    #         for item in data:
-    #             if item is not None:
-    #                 id = item.get('Id', '')
-    #                 name = item.get('Owner-name', '')
-    #                 email = item.get('Phone', '')
-    #                 phone = item.get('CCCD', '')
-    #                 time_regis = item.get('Time-register')
-    #                 period_time = item.get('Period-time')
-    #                 total_money = item.get('Total-money')
-    #                 car_manager_info.append((id, name, email, phone, time_regis, period_time, total_money))
-    #     return car_manager_info
-
-    # Hàm lắng nghe sự kiện thay đổi trên Firebase Realtime Database
-    # def get_car_manager_info_realtime(self, callback):
-    #     def on_change(event):
-    #         callback(event)
-    #     self.fb.stream('/Car-management', callback=on_change)
     def add_car_data(self, id, owner_name, phone, cccd, time_register, period_time, total_money):
         car_data = {
             "Id": id,
@@ -74,7 +52,6 @@ class database:
                 if car is not None and car['L_Plate'] == license_plate:
                     return True
         return False
-
     # Trả về thông tin với biển số tương ứng: tên người, cccd,
         # Lấy thông tin cột LP_Car và thông tin cột Car-management
         # Ktra xem ID_owner tương ứng với L_Plate trong cột LP_Car và lấy thông tin car trong cột Car-management với ID_owner tương ứng đó
@@ -98,9 +75,35 @@ class database:
                                 car_info['L_Plate'] = license_plate
                                 break
         return car_info
-        # print(lp_data)
-        # print("\n")
-        # print(car_data)
     def get(self):
         lp_data = self.fb.get('/LP_Car', '')
         return lp_data
+
+    def add_license_plate(self, card, license_plate):
+        # Kiểm tra xem giá trị của card có trùng với giá trị của khóa ID_card trong cột card_car hay không
+        card_car = self.fb.get('/card_car', '')
+        card_car = list(filter(None, card_car))
+        id_card = None
+        for item in card_car:
+            if item['ID_card'] == card:
+                id_card = item['Id']
+                break
+
+        if id_card is not None:
+            # Cập nhật khóa L_Plate của bản ghi tương ứng với khóa ID_card trong cột card_car
+            self.fb.patch('/card_car/' + id_card, {'L_Plate': license_plate})
+            print('Thêm license plate thành công!')
+        else:
+            print('Không tìm thấy card trong cơ sở dữ liệu!')
+    # def get1(self):
+    #     a=self.fb.get('/card_car','')
+    #     print(a)
+    def check_card_license_plate(self, card, license_plate):
+        # Kiểm tra xem giá trị của card và license_plate có trùng với giá trị của khóa ID_card và L_Plate trong cột card_car hay không
+        card_car = self.fb.get('/card_car', '')
+        card_car = list(filter(None, card_car))
+        for item in card_car:
+            if item['ID_card'] == card and item['L_Plate'] == license_plate:
+                print('Mời bạn ra')
+                return
+        print('Mời bạn cút vào trong')

@@ -114,9 +114,10 @@ class regis:
         # Kết nối đến Firebase
         self.db = database()
 
-        license_plate = "99J61241"
-        if (self.db.check_license_plate(license_plate)):
-            list_info = self.db.get_car_info(license_plate)
+        self.license_plate = "55F51921"
+        self.car_card = "F7F5DDD78"
+        if (self.db.check_license_plate(self.license_plate)):
+            list_info = self.db.get_car_info(self.license_plate)
             self.ten_chu_entry.insert(0, list_info['Owner-name'])
             self.ten_chu_entry.configure(state='readonly')
             self.id_entry.insert(0, list_info['ID_owner'])
@@ -131,7 +132,7 @@ class regis:
             # chỉ load biển số
             self.bien_so_entry.configure(state='normal')
             self.bien_so_entry.delete(0, 'end')
-            self.bien_so_entry.insert(0, license_plate)
+            self.bien_so_entry.insert(0, self.license_plate)
             self.bien_so_entry.configure(state='readonly')
     # Hàm lấy giá tiền từ radiobutton
     def get_price(self):
@@ -191,7 +192,6 @@ class regis:
                 if data is not None and 'Phone' in data and data['Phone'] == sdt:
                     duplicate_phone = True
                     break
-
         # Add data to Firebase or show error message
         if duplicate_cccd:
             messagebox.showerror("Duplicate", "Số CCCD đã tồn tại trong cơ sở dữ liệu. Vui lòng nhập lại.")
@@ -212,10 +212,12 @@ class regis:
                 "ID_owner": id_owner,
                 "L_Plate": bs
             }
+
             self.db.fb.put('/LP_Car',id2,lp_car)
             self.db.fb.put('/Car-management', id1, car_data)
+            self.db.add_license_plate(self.car_card,self.license_plate)
             messagebox.showinfo("Success", "Đã thêm dữ liệu thành công.")
             self.root.destroy()
-# root = Tk()
-# obj = regis(root)
-# root.mainloop()
+root = Tk()
+obj = regis(root)
+root.mainloop()
