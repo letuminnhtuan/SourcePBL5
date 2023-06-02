@@ -22,7 +22,7 @@ class car: # class quản lí car
                         command=self.logout_function)
         back.place(x=1080, y=20, width=100, height=40)
         # Image
-        icon1 = Image.open("Picture/staff3.png")
+        icon1 = Image.open("./Picture/staff3.png")
         icon1 = icon1.resize((80, 60), Image.ANTIALIAS)
         self.icon_image1 = ImageTk.PhotoImage(icon1)
         icon_label1 = Label(header_frame, image=self.icon_image1, bg="pink")
@@ -71,6 +71,6 @@ class car: # class quản lí car
         self.root.after(2000, self.update_car_info)
     def logout_function(self):
         self.root.destroy()
-# root = Tk()
-# obj = car(root)
-# root.mainloop()
+root = Tk()
+obj = car(root)
+root.mainloop()

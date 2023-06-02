@@ -81,3 +81,7 @@ class db:
         self.app = regis(self.new_window)
     def logout_function(self):
         self.root.destroy()
+#
+# root = Tk()
+# obj = db(root)
+# root.mainloop()
