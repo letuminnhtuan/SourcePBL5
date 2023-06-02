@@ -1,5 +1,5 @@
 from firebase import firebase
-import datetime
+from datetime import datetime
 class database:
     def __init__(self):
         # Firebase
