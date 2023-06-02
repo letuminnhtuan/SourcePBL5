@@ -1,4 +1,5 @@
 from firebase import firebase
+import datetime
 class database:
     def __init__(self):
         # Firebase
@@ -134,6 +135,42 @@ class database:
                 return 'Bye'
         # print('Mời bạn cút vào trong')
         return 'Dell'
+    
+    def check_card_license_plate(self, card, license_plate):
+        # Kiểm tra xem giá trị của card và license_plate có trùng với giá trị của khóa ID_card và L_Plate trong cột card_car hay không
+        card_car = self.fb.get('/card_car', '')
+        card_car = list(filter(None, card_car))
+        time_out = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        for item in card_car:
+            if item['ID_card'] == card and item['L_Plate'] == license_plate:
+                time_in = self.get_car_info1(license_plate)[0]
+                period = self.get_car_info1(license_plate)[1]
+                period = float(period.replace('h',''))
+                time_in = datetime.strptime(time_in, "%Y-%m-%d %H:%M:%S")
+                time_out = datetime.strptime(time_out, "%Y-%m-%d %H:%M:%S")
+                time = time_out - time_in
+                print("Vào lúc : ",time_in)
+                print("Thời gian thuê từ trước : ", period , "h")
+                hour = time.total_seconds() / 3600
+                check = hour - period
+                fee = check * 3000
+                print("Thời gian lấy xe bị lố (h) : ",check,"h")
+                if check <= 0 : # Lấy sớm
+                    print('Mời bạn ra')
+                else : # Lấy muộn
+                    print('Mời bạn ra , nhưng bạn cần đóng thêm ',fee, " VND tiền phí")
+                return
+        print('Mời bạn cút vào trong')
 
-# db = database()
-# db.check_card_license_plate("458EEB2AB", "99J61241")
+    def get_car_info1(self, L_Plate):
+        lp_car = self.fb.get('/LP_Car', '')
+        lp_car = list(filter(None, lp_car))
+        for lp in lp_car:
+            if  lp['L_Plate'] == L_Plate:
+                id_owner = lp['ID_owner']
+                # Nếu tìm thấy khớp trong bảng LP_Car thì lấy giá trị time_register và period_time trong bảng Car-management tương ứng với ID_owner đó
+                car_mgmt = self.fb.get('/Car-management', '')
+                car_mgmt = list(filter(None, car_mgmt))
+                for car in car_mgmt:
+                    if car['ID_owner'] == id_owner:
+                        return car['Time-register'], car['Period-time']
