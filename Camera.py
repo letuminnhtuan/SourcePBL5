@@ -1,11 +1,12 @@
 from tkinter import *
+from tkinter import messagebox
 import cv2
 from PIL import Image, ImageTk
 import threading
 import tkinter as tk
 from Dashboard import db
 from Firebase import database
-from Regis import Form
+from Register import regis
 from XuLi import *
 class QL_Camera:
     def __init__(self, master):
@@ -13,6 +14,8 @@ class QL_Camera:
         self.root.title("Quản lí bãi xe")
         self.root.geometry("1500x800")
         self.root.resizable(False, False)
+        self.database = database()
+        self.root.attributes("-fullscreen", True)
         # Tạo PanedWindow và chia màn hình thành hai bên
         self.paned_window = PanedWindow(self.root, orient=HORIZONTAL, sashwidth=5,bg="pink")
         self.paned_window.pack(fill=BOTH, expand=True)
@@ -36,13 +39,13 @@ class QL_Camera:
         back.place(x=620, y=20, width=100, height=40)
         #title_left
         icon2 = Image.open("Picture/title1.png")
-        icon2 = icon2.resize((360, 140), Image.ANTIALIAS)
+        icon2 = icon2.resize((360, 140), Image.LANCZOS)
         self.icon_image2 = ImageTk.PhotoImage(icon2)
         icon_label2 = Label(self.frame_left, image=self.icon_image2,bg="white")
         icon_label2.place(x=220,y=0)
         #title_right
         icon1 = Image.open("Picture/title1.png")
-        icon1 = icon1.resize((360, 140), Image.ANTIALIAS)
+        icon1 = icon1.resize((360, 140), Image.LANCZOS)
         self.icon_image1 = ImageTk.PhotoImage(icon1)
         icon_label2 = Label(self.frame_right, image=self.icon_image1, bg="white")
         icon_label2.place(x=220, y=0)
@@ -76,6 +79,8 @@ class QL_Camera:
         self.thread_right.daemon = True
         self.thread_right.start()
 
+        data_thread = threading.Thread(target=self.data_handler, args=(arData, self.cap_left, self.cap_right,))
+        data_thread.start()
         # -----------------------------------------THÔNG TIN CAMERA------------------------------------------
         #                                       ----> CAMERA PHẢI <------
         Label(self.frame_right, text="Id ", font=("Goudy old style", 14, "bold"), fg="grey", bg="white").place(x=60,
@@ -111,8 +116,8 @@ class QL_Camera:
         self.bienso.place(x=270, y=720, width=320, height=35)
     # Hàm cập nhật camera xe vào lên giao điện
     def update_camera_left(self):
-        data_thread = threading.Thread(target=self.data_handler, args=(arData, self.cap_left,))
-        data_thread.start()
+        # data_thread = threading.Thread(target=self.data_handler_in, args=(arData, self.cap_left,))
+        # data_thread.start()
         while True: # Lặp vô hạn để lấy hình ảnh từ camera
             ret, frame = self.cap_left.read() # Gọi phương thức read của đối tượng cap_left ở trên để lấy hình ảnh từ camera trái
             if ret: # Kiểm tra xem có lấy được ảnh từ camera không
@@ -124,6 +129,8 @@ class QL_Camera:
                 self.label_camera_left.configure(image=image)
                 self.label_camera_left.image = image
     def update_camera_right(self):
+        # data_thread = threading.Thread(target=self.data_handler_out, args=(arData, self.cap_right,))
+        # data_thread.start()
         while True:# Lặp vô hạn để lấy hình ảnh từ camera
             # Lấy hình ảnh từ camera
             ret, frame = self.cap_right.read()# Gọi phương thức read của đối tượng cap_left ở trên để lấy hình ảnh từ camera phải
@@ -135,23 +142,36 @@ class QL_Camera:
                 # Hiển thị hình ảnh trong Label ( cập nhật hình ảnh mới nhật lên label )
                 self.label_camera_right.configure(image=image)
                 self.label_camera_right.image = image
-    def data_handler(self, arData, cap):
+    def data_handler(self, arData, cap_left, cap_right):
         while True:
             if arData.in_waiting == 0:
                 continue
             else:
-                data = str(arData.read(), 'utf')
-                if data == '1':
-                    _, img = cap.read()
+                data1 = arData.readline().decode().rstrip().upper()
+                time.sleep(1)
+                data2 = arData.readline().decode().rstrip().upper()
+                if data1 == "IN":
+                    _, img = cap_left.read()
                     num_plate = plate(img)
                     num = list(num_plate)
-                    print(num)
                     if(len(num) != 0):
                         SendData('1')
-
                         self.tranfer_Regis(num[0])
                     else:
                         SendData('0')
+                    self.database.add_license_plate(card=data2, license_plate=num[0])
+                elif data1 == "OUT":
+                    print("out")
+                    _, img = cap_right.read()
+                    num_plate = plate(img)
+                    num = list(num_plate)
+                    if len(num) != 0:
+                        mess = self.database.check_card_license_plate(card=data2, license_plate=num[0])
+                        messagebox.showinfo("Result", mess)
+                        if(mess != 'Dell'):
+                            SendData('3')
+                    else:
+                        SendData('2')
                 time.sleep(1)
     # Hàm chuyển sang trang Quản lí
     def tranfer_DB(self):
@@ -161,27 +181,15 @@ class QL_Camera:
         self.app = db(self.new_window)
     def logout_function(self):
         self.root.destroy()
+        # self.tranfer_Login()
     def tranfer_Regis(self, plate):
         self.open_new_Regis(plate)
     def open_new_Regis(self, plate):
         self.new_window = Toplevel(self.root)
-        self.app = Form(plate, self.new_window)       
-#
-# root = Tk()
-# obj = QL_Camera(root)
-# root.mainloop()
-# index = 0
-# arr = []
-# while True:
-#     cap = cv2.VideoCapture(index)
-#     if not cap.read()[0]:
-#         break
-#     else:
-#         arr.append(index)
-#     cap.release()
-#     index += 1
-# print(arr)
-# cap = cv2.VideoCapture(1)
-# while True:
-#     _, img = cap.read()
-#     cv2.imshow("c", img)
+        self.app = regis(plate, self.new_window)
+    # def tranfer_Login(self):
+    #     self.open_new_Login()
+    # def open_new_Login(self):
+    #     from App import Login
+    #     self.new_window = Toplevel(self.root)
+    #     self.app = Login(self.new_window)

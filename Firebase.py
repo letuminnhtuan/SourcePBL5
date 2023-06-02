@@ -1,109 +1,51 @@
-from firebase import firebase
-class database:
-    def __init__(self):
-        # Firebase
-            self.fb = firebase.FirebaseApplication('https://pbl5-7a693-default-rtdb.firebaseio.com', None)
-    # Hàm check login
-    def check_login(self, username, password):
-        result = self.fb.get('Login', None)
-        found = False
-        user_role = None
-        for key in result.keys():
-            if result[key]['username'] == username and result[key]['password'] == password:
-                found = True
-                user_role = result[key]['role']
-                break
-        return found, user_role
-    # Hàm lấy thông tin xe đăng kí
-    def get_car_manager_info(self):
-        data = self.fb.get('Car-management', None)
-        car_manager_info = []
-        if data is not None:
-            for item in data:
-                if item is not None:
-                    id = item.get('Id', '')
-                    name = item.get('Owner-name', '')
-                    email = item.get('Phone', '')
-                    phone = item.get('CCCD', '')
-                    time_regis = item.get('Time-register')
-                    period_time = item.get('Period-time')
-                    total_money = item.get('Total-money')
-                    car_manager_info.append((id, name, email, phone, time_regis, period_time, total_money))
-        return car_manager_info
-    def add_car_data(self, id, owner_name, phone, cccd, time_register, period_time, total_money):
-        car_data = {
-            "Id": id,
-            "Owner-name": owner_name,
-            "Phone": phone,
-            "CCCD": cccd,
-            "Time-register": time_register,
-            "Period-time": period_time,
-            "Total-money": total_money
-        }
-        self.fb.post('/Car-management', car_data)
+import DetectPlate.function.helper as helper
+import DetectPlate.function.utils_rotate as utils_rotate
+import cv2
+import torch
+import serial
+import time
+import threading
 
-    def get_cars(self):
-        return self.fb.get('/LP_Car', '')
+arData = serial.Serial('COM4', 9600)
+yolo_LP_detect = torch.hub.load('yolov5', 'custom', path='E:\\PBL5\\SourceCodePBl5\\DetectPlate\\model\\LP_detector.pt', force_reload=True, source='local')
+yolo_license_plate = torch.hub.load('yolov5', 'custom', path='E:\\PBL5\\SourceCodePBl5\\DetectPlate\\model\\best.pt', force_reload=True, source='local')
 
-    def check_license_plate(self, license_plate):
-        data = self.get_cars()
-        if data is not None:
-            for car in data:
-                if car is not None and car['L_Plate'] == license_plate:
-                    return True
-        return False
-    # Trả về thông tin với biển số tương ứng: tên người, cccd,
-        # Lấy thông tin cột LP_Car và thông tin cột Car-management
-        # Ktra xem ID_owner tương ứng với L_Plate trong cột LP_Car và lấy thông tin car trong cột Car-management với ID_owner tương ứng đó
-    def get_car_info(self, license_plate):
-        lp_data = self.fb.get('/LP_Car', '')
-        lp_data = list(filter(None, lp_data))
-        car_data = self.fb.get('/Car-management', '')
-        car_data = list(filter(None, car_data))
-        car_info = {}
+def detect(img):
+    plates = yolo_LP_detect(img, size=640)
+    list_plates = plates.pandas().xyxy[0].values.tolist()
+    
+    return list_plates
 
-        if lp_data is not None and car_data is not None:
-            for lp_dict in lp_data:
-                if lp_dict['L_Plate'] == license_plate:
-                    if 'ID_owner' not in lp_dict:
-                        print("Không có khóa ID_owner")
-                    else:
-                        id_owner = lp_dict['ID_owner']
-                        for car_dict in car_data:
-                            if str(car_dict.get('ID_owner')) == id_owner:
-                                car_info = car_dict
-                                car_info['L_Plate'] = license_plate
-                                break
-        return car_info
-    def get(self):
-        lp_data = self.fb.get('/LP_Car', '')
-        return lp_data
+def plate(img):
+    yolo_license_plate.conf = 0.60
+    list_plates = detect(img)
+    list_read_plates = set()
+    if(len(list_plates) == 0):
+        return list_read_plates
+    else:
+        for plate in list_plates:
+            # bounding box
+            cv2.rectangle(img, (int(plate[0]),int(plate[1])), (int(plate[2]),int(plate[3])), color = (0,0,225), thickness = 2)
 
-    def add_license_plate(self, card, license_plate):
-        # Kiểm tra xem giá trị của card có trùng với giá trị của khóa ID_card trong cột card_car hay không
-        card_car = self.fb.get('/card_car', '')
-        card_car = list(filter(None, card_car))
-        id_card = None
-        for item in card_car:
-            if item['ID_card'] == card:
-                id_card = item['Id']
-                break
+            # read plate number
+            flag = 0
+            x = int(plate[0]) # xmin
+            y = int(plate[1]) # ymin
+            w = int(plate[2] - plate[0]) # xmax - xmin
+            h = int(plate[3] - plate[1]) # ymax - ymin  
+            crop_img = img[y:y+h, x:x+w]
+            lp = ""
+            for cc in range(0,2):
+                for ct in range(0,2):
+                    lp = helper.read_plate(yolo_license_plate, utils_rotate.deskew(crop_img, cc, ct))
+                    cv2.putText(img, lp, (int(plate[0]), int(plate[1]-10)), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
+                    if lp != "unknown":
+                        list_read_plates.add(lp)
+                        flag = 1
+                        break
+                if flag == 1:
+                    break
+    return list_read_plates
 
-        if id_card is not None:
-            # Cập nhật khóa L_Plate của bản ghi tương ứng với khóa ID_card trong cột card_car
-            self.fb.patch('/card_car/' + id_card, {'L_Plate': license_plate})
-            print('Thêm license plate thành công!')
-        else:
-            print('Không tìm thấy card trong cơ sở dữ liệu!')
-    # def get1(self):
-    #     a=self.fb.get('/card_car','')
-    #     print(a)
-    def check_card_license_plate(self, card, license_plate):
-        # Kiểm tra xem giá trị của card và license_plate có trùng với giá trị của khóa ID_card và L_Plate trong cột card_car hay không
-        card_car = self.fb.get('/card_car', '')
-        card_car = list(filter(None, card_car))
-        for item in card_car:
-            if item['ID_card'] == card and item['L_Plate'] == license_plate:
-                print('Mời bạn ra')
-                return
-        print('Mời bạn cút vào trong')
+def SendData(data):
+    arData.write(data.encode('utf-8'))
