@@ -122,19 +122,6 @@ class database:
             print('Thêm license plate thành công!')
         else:
             print('Không tìm thấy card trong cơ sở dữ liệu!')
-    # def get1(self):
-    #     a=self.fb.get('/card_car','')
-    #     print(a)
-    def check_card_license_plate(self, card, license_plate):
-        # Kiểm tra xem giá trị của card và license_plate có trùng với giá trị của khóa ID_card và L_Plate trong cột card_car hay không
-        card_car = self.fb.get('/card_car', '')
-        card_car = list(filter(None, card_car))
-        for item in card_car:
-            if item['ID_card'] == card and item['L_Plate'] == license_plate:
-                # print('Mời bạn ra')
-                return 'Bye'
-        # print('Mời bạn cút vào trong')
-        return 'Dell'
     
     def check_card_license_plate(self, card, license_plate):
         # Kiểm tra xem giá trị của card và license_plate có trùng với giá trị của khóa ID_card và L_Plate trong cột card_car hay không
