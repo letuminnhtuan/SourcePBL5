@@ -15,6 +15,8 @@ int ledPins[] = {2, 3, 4, 5};
 int cbPins[] = {9, 10, 11, 12};
 int servoPinIn = 7;
 int servoPinOut = 8;
+int close = 80;
+int open = 170;
 
 // Phần cứng
 RFID rfid1(SS_PIN1, RST_PIN1);
@@ -38,9 +40,9 @@ void SetUpSlot(){
 // Thiết lập RFID, Servo cho cổng vào
 void SetUpGate(){
   servo_in.attach(servoPinIn);
-  servo_in.write(0);
+  servo_in.write(close);
   servo_out.attach(servoPinOut);
-  servo_out.write(0);
+  servo_out.write(close);
   SPI.begin();
   rfid1.init();
   rfid2.init();
@@ -81,12 +83,9 @@ void Check(){
           char incomingByte = Serial.read();
           // kiểm tra tín hiệu
           if (incomingByte == '1'){
-            // digitalWrite(8, HIGH);
-            // delay(1000);
-            // digitalWrite(8, LOW);
-            servo_in.write(90);
+            servo_in.write(open);
             delay(3000);
-            servo_in.write(0);
+            servo_in.write(close);
           }
           break;
         }
@@ -116,9 +115,9 @@ void Check(){
             // digitalWrite(9, HIGH);
             // delay(1000);
             // digitalWrite(9, LOW);
-            servo_out.write(90);
+            servo_out.write(open);
             delay(3000);
-            servo_out.write(0);
+            servo_out.write(close);
           }
           break;
         }

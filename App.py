@@ -16,7 +16,7 @@ class Login:
         # Form Login
         Frame_login = Frame(self.root, bg="white")
         Frame_login.place(x=300, y=90, width=600, height=400)
-        title = Label(Frame_login, text="Quản lí bãi giữ xe", font=("Impact", 35, "bold"), fg="#6162FF",bg="white").place(x=90, y=30)
+        title = Label(Frame_login, text="Quản lí bãi giữ xe", font=("Times", 35, "bold"), fg="#6162FF",bg="white").place(x=90, y=30)
         # Username
         lbl_user = Label(Frame_login, text="UserName", font=("Goudy old style", 15, "bold"), fg="grey",bg="white").place(x=90, y=140)
         self.username = Entry(Frame_login, font=("Goudy old style", 15), bg="#E7E6E6")

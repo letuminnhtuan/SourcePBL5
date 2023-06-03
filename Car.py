@@ -71,6 +71,3 @@ class car: # class quản lí car
         self.root.after(2000, self.update_car_info)
     def logout_function(self):
         self.root.destroy()
-root = Tk()
-obj = car(root)
-root.mainloop()

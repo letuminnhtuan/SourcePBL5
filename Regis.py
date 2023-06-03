@@ -143,6 +143,3 @@ class Form(Frame):
             self.db.fb.put('/Car-management', id1, car_data)
             messagebox.showinfo("Success", "Đã thêm dữ liệu thành công.")
             self.master.destroy()
-root = Tk()
-obj = Form("42K51251", root)
-root.mainloop()

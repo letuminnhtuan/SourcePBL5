@@ -52,9 +52,9 @@ class regis:
         price_frame.place(x=360 , y =70 , width=220,height=430)
 
         title_price_frame = Frame(price_frame,bg="white", bd=0, highlightthickness=2,
-                                highlightbackground="pink")
-        title_price_frame.place(x=0,y=0,width=100,height=40)
-        title_price = Label(title_price_frame, text="BẢNG GIÁ", font=("Arial", 12),bg="white")
+                                highlightbackground="white")
+        title_price_frame.place(x=0,y=0,width=150,height=40)
+        title_price = Label(title_price_frame, text="BẢNG GIÁ", font=("Arial", 14),bg="white")
         title_price.place(x=5 , y = 5 )
         # Giờ
         Label(price_frame, text="Giờ :", font=("Arial", 12),bg="white").place(x = 25 , y = 80 , width=50 , height=30)
@@ -88,13 +88,13 @@ class regis:
         # Thêm 4 radio button vào frame mới
         self.time_var = StringVar()
         #time_var.set("Giờ")
-        hour_radio = Radiobutton(radio_frame, text="Giờ", variable=self.time_var, value="Giờ",bg="white")
+        hour_radio = Radiobutton(radio_frame, text="Giờ", font=("Arial", 12), variable=self.time_var, value="Giờ",bg="white")
         hour_radio.place(x=80,y=10)
-        day_radio = Radiobutton(radio_frame, text="Ngày", variable=self.time_var, value="Ngày",bg="white")
+        day_radio = Radiobutton(radio_frame, text="Ngày", font=("Arial", 12), variable=self.time_var, value="Ngày",bg="white")
         day_radio.place(x=80,y=60)
-        week_radio = Radiobutton(radio_frame, text="Tuần", variable=self.time_var, value="Tuần",bg="white")
+        week_radio = Radiobutton(radio_frame, text="Tuần", font=("Arial", 12), variable=self.time_var, value="Tuần",bg="white")
         week_radio.place(x=80,y=110)
-        month_radio = Radiobutton(radio_frame, text="Tháng", variable=self.time_var, value="Tháng",bg="white")
+        month_radio = Radiobutton(radio_frame, text="Tháng", font=("Arial", 12), variable=self.time_var, value="Tháng",bg="white")
         month_radio.place(x=80,y=160)
 
         # Tạo frame chứa so luong va thanh tien
@@ -222,6 +222,3 @@ class regis:
                 self.db.fb.put('/Car-management', id1, car_data)
                 messagebox.showinfo("Success", "Đã thêm dữ liệu thành công.")
                 self.root.destroy()
-# root = Tk()
-# obj = regis("99J61241", root)
-# root.mainloop()
