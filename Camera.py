@@ -155,8 +155,8 @@ class QL_Camera:
                     num_plate = plate(img)
                     num = list(num_plate)
                     if(len(num) != 0):
-                        SendData('1')
                         self.tranfer_Regis(num[0])
+                        SendData('1')
                     else:
                         SendData('0')
                     self.database.add_license_plate(card=data2, license_plate=num[0])
