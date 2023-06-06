@@ -1,9 +1,13 @@
 from tkinter import *
+from tkinter import messagebox
 import cv2
 from PIL import Image, ImageTk
 import threading
 import tkinter as tk
 from Dashboard import db
+from Firebase import database
+from Register import regis
+from XuLi import *
 class camera_client:
     def __init__(self, root):
         self.root = root
@@ -69,39 +73,9 @@ class camera_client:
         self.thread_right.daemon = True
         self.thread_right.start()
 
-        # THÔNG TIN CAMERA
-        #Camera phải
-        Label(self.frame_right, text="Id ", font=("Goudy old style", 14, "bold"), fg="grey", bg="white").place(x=60,
-                                                                                                          y=625)
-        self.id = Entry(self.frame_right, font=("Goudy old style", 7), bg="#E7E6E6", state="normal")
-        self.id.place(x=270, y=620, width=320, height=35)
-
-        Label(self.frame_right, text="Time out", font=("Goudy old style", 14, "bold"), fg="grey", bg="white").place(x=60,
-                                                                                                               y=675)
-        self.timeout = Entry(self.frame_right, font=("Goudy old style", 7), bg="#E7E6E6", state="normal")
-        self.timeout.place(x=270, y=670, width=320, height=35)
-
-        Label(self.frame_right, text="Biển số", font=("Goudy old style", 14, "bold"), fg="grey", bg="white").place(x=60,
-                                                                                                              y=725)
-        self.bienso = Entry(self.frame_right, font=("Goudy old style", 7), bg="#E7E6E6", state="normal")
-        self.bienso.place(x=270, y=720, width=320, height=35)
-
-        #Camera trái
-        Label(self.frame_left, text="Id ", font=("Goudy old style", 14, "bold"), fg="grey", bg="white").place(x=60,
-                                                                                                               y=625)
-        self.id = Entry(self.frame_left, font=("Goudy old style", 7), bg="#E7E6E6", state="normal")
-        self.id.place(x=270, y=620, width=320, height=35)
-
-        Label(self.frame_left, text="Time in", font=("Goudy old style", 14, "bold"), fg="grey", bg="white").place(
-            x=60,
-            y=675)
-        self.timein = Entry(self.frame_left, font=("Goudy old style", 7), bg="#E7E6E6", state="normal")
-        self.timein.place(x=270, y=670, width=320, height=35)
-
-        Label(self.frame_left, text="Biển số", font=("Goudy old style", 14, "bold"), fg="grey", bg="white").place(x=60,
-                                                                                                                   y=725)
-        self.bienso = Entry(self.frame_left, font=("Goudy old style", 7), bg="#E7E6E6", state="normal")
-        self.bienso.place(x=270, y=720, width=320, height=35)
+        data_thread = threading.Thread(target=self.data_handler, args=(arData, self.cap_left, self.cap_right,))
+        data_thread.start()
+        
     def update_camera_left(self):
         while True:
             # Lấy hình ảnh từ camera
@@ -126,11 +100,37 @@ class camera_client:
                 # Hiển thị hình ảnh trong Label
                 self.label_camera_right.configure(image=image)
                 self.label_camera_right.image = image
-    def tranfer_DB(self):
-        self.open_new_DB()
-    def open_new_DB(self):
-        self.new_window = Toplevel(self.root)
-        self.app = db(self.new_window)
+    def data_handler(self, arData, cap_left, cap_right):
+        while True:
+            if arData.in_waiting == 0:
+                continue
+            else:
+                data1 = arData.readline().decode().rstrip().upper()
+                time.sleep(1)
+                data2 = arData.readline().decode().rstrip().upper()
+                if data1 == "IN":
+                    _, img = cap_left.read()
+                    num_plate = plate(img)
+                    num = list(num_plate)
+                    if(len(num) != 0):
+                        self.tranfer_Regis(num[0])
+                        SendData('1')
+                    else:
+                        SendData('0')
+                    self.database.add_license_plate(card=data2, license_plate=num[0])
+                elif data1 == "OUT":
+                    print("out")
+                    _, img = cap_right.read()
+                    num_plate = plate(img)
+                    num = list(num_plate)
+                    if len(num) != 0:
+                        mess = self.database.check_card_license_plate(card=data2, license_plate=num[0])
+                        messagebox.showinfo("Result", mess)
+                        if(mess != 'Dell'):
+                            SendData('3')
+                    else:
+                        SendData('2')
+                time.sleep(1)
     def logout_function(self):
         self.root.destroy()
 

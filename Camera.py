@@ -81,39 +81,7 @@ class QL_Camera:
 
         data_thread = threading.Thread(target=self.data_handler, args=(arData, self.cap_left, self.cap_right,))
         data_thread.start()
-        # # -----------------------------------------THÔNG TIN CAMERA------------------------------------------
-        # #                                       ----> CAMERA PHẢI <------
-        # Label(self.frame_right, text="Id ", font=("Goudy old style", 14, "bold"), fg="grey", bg="white").place(x=60,
-        #                                                                                                   y=625)
-        # self.id = Entry(self.frame_right, font=("Goudy old style", 7), bg="#E7E6E6", state="normal")
-        # self.id.place(x=270, y=620, width=320, height=35)
-
-        # Label(self.frame_right, text="Time out", font=("Goudy old style", 14, "bold"), fg="grey", bg="white").place(x=60,
-        #                                                                                                        y=675)
-        # self.timeout = Entry(self.frame_right, font=("Goudy old style", 7), bg="#E7E6E6", state="normal")
-        # self.timeout.place(x=270, y=670, width=320, height=35)
-
-        # Label(self.frame_right, text="Biển số", font=("Goudy old style", 14, "bold"), fg="grey", bg="white").place(x=60,
-        #                                                                                                       y=725)
-        # self.bienso = Entry(self.frame_right, font=("Goudy old style", 7), bg="#E7E6E6", state="normal")
-        # self.bienso.place(x=270, y=720, width=320, height=35)
-
-        # #                                        ----> Camera TRÁI <------
-        # Label(self.frame_left, text="Id ", font=("Goudy old style", 14, "bold"), fg="grey", bg="white").place(x=60,
-        #                                                                                                        y=625)
-        # self.id = Entry(self.frame_left, font=("Goudy old style", 7), bg="#E7E6E6", state="normal")
-        # self.id.place(x=270, y=620, width=320, height=35)
-
-        # Label(self.frame_left, text="Time in", font=("Goudy old style", 14, "bold"), fg="grey", bg="white").place(
-        #     x=60,
-        #     y=675)
-        # self.timein = Entry(self.frame_left, font=("Goudy old style", 7), bg="#E7E6E6", state="normal")
-        # self.timein.place(x=270, y=670, width=320, height=35)
-
-        # Label(self.frame_left, text="Biển số", font=("Goudy old style", 14, "bold"), fg="grey", bg="white").place(x=60,
-        #                                                                                                            y=725)
-        # self.bienso = Entry(self.frame_left, font=("Goudy old style", 7), bg="#E7E6E6", state="normal")
-        # self.bienso.place(x=270, y=720, width=320, height=35)
+        
     # Hàm cập nhật camera xe vào lên giao điện
     def update_camera_left(self):
         # data_thread = threading.Thread(target=self.data_handler_in, args=(arData, self.cap_left,))

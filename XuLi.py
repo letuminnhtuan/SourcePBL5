@@ -16,8 +16,9 @@ def detect_com_port():
 
 com = detect_com_port()
 arData = serial.Serial(com, 9600)
-yolo_LP_detect = torch.hub.load('yolov5', 'custom', path='E:\\PBL5\\SourceCodePBl5\\DetectPlate\\model\\LP_detector.pt', force_reload=True, source='local')
-yolo_license_plate = torch.hub.load('yolov5', 'custom', path='E:\\PBL5\\SourceCodePBl5\\DetectPlate\\model\\best.pt', force_reload=True, source='local')
+
+yolo_LP_detect = torch.hub.load('yolov5', 'custom', path='./DetectPlate/model/LP_detector.pt', force_reload=True, source='local')
+yolo_license_plate = torch.hub.load('yolov5', 'custom', path='./DetectPlate/model/best.pt', force_reload=True, source='local')
 
 def detect(img):
     plates = yolo_LP_detect(img, size=640)
