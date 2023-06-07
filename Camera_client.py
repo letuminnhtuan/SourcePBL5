@@ -28,7 +28,7 @@ class camera_client:
         self.paned_window.add(self.split_frame)
         self.paned_window.add(self.frame_right)
         # Button
-        back = Button(self.frame_right, text="Out", bd=0, font=("Goudy old style", 15), bg="#6162FF", fg="white",
+        back = Button(self.frame_right, text="Thoát", bd=0, font=("Helvetica", 18), bg="#6162FF", fg="white",
                       command=self.logout_function)
         back.place(x=620, y=20, width=100, height=40)
         #title_left
@@ -44,8 +44,8 @@ class camera_client:
         icon_label2 = Label(self.frame_right, image=self.icon_image1, bg="white")
         icon_label2.place(x=220, y=0)
         # Title
-        label_xe_vao = Label(self.frame_left, text="Xe vào", font=("Impact", 22, "italic"), fg="gray",bg="white").place(x=350, y=40, width=90, height=50)
-        label_xe_ra = Label(self.frame_right, text="Xe ra", font=("Impact", 22, "italic"), fg="gray",bg="white").place(x=350, y=40, width=90, height=50)
+        label_xe_vao = Label(self.frame_left, text="Xe vào", font=("Helvetica", 30, "bold"), fg="gray",bg="white").place(x=350, y=40, width=90, height=50)
+        label_xe_ra = Label(self.frame_right, text="Xe ra", font=("Helvetica", 30, "bold"), fg="gray",bg="white").place(x=350, y=40, width=90, height=50)
 
         # Thêm Label để hiển thị hình ảnh từ camera trái
         self.label_camera_left = tk.Label(self.frame_left,width=650,height=430,bg="white")
@@ -112,21 +112,28 @@ class camera_client:
                     _, img = cap_left.read()
                     num_plate = plate(img)
                     num = list(num_plate)
+                    temp = self.database.get_Plate(data2)
                     if(len(num) != 0):
-                        self.tranfer_Regis(num[0])
+                        if temp == "":
+                            self.tranfer_Regis(num[0])
+                            self.database.add_license_plate(card=data2, license_plate=num[0])
+                        else:
+                            print("Co")
                         SendData('1')
                     else:
                         SendData('0')
-                    self.database.add_license_plate(card=data2, license_plate=num[0])
                 elif data1 == "OUT":
-                    print("out")
                     _, img = cap_right.read()
                     num_plate = plate(img)
                     num = list(num_plate)
                     if len(num) != 0:
-                        mess = self.database.check_card_license_plate(card=data2, license_plate=num[0])
-                        messagebox.showinfo("Result", mess)
-                        if(mess != 'Dell'):
+                        mess, check = self.database.check_card_license_plate(card=data2, license_plate=num[0])
+                        print(check)
+                        if(check != None):
+                            if(check >= 0):
+                                self.database.set_Plate(data2)
+                        messagebox.showinfo("Thông báo", mess)
+                        if(mess != 'Không hợp lệ!!'):
                             SendData('3')
                     else:
                         SendData('2')

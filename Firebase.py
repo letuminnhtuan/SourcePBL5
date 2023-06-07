@@ -132,22 +132,10 @@ class database:
                 break
         if id_card is not None:
             # Cập nhật khóa L_Plate của bản ghi tương ứng với khóa ID_card trong cột card_car
-            self.fb.patch('/card_car/' + id_card, {'L_Plate': license_plate})
+            self.fb.patch('/card_car/' + str(id_card), {'L_Plate': license_plate})
             print('Thêm license plate thành công!')
         else:
             print('Không tìm thấy card trong cơ sở dữ liệu!')
-    # def get1(self):
-    #     a=self.fb.get('/card_car','')
-    #     print(a)
-    def check_card_license_plate1(self, card, license_plate):
-        # Kiểm tra xem giá trị của card và license_plate có trùng với giá trị của khóa ID_card và L_Plate trong cột card_car hay không
-        card_car = self.fb.get('/card_car', '')
-        card_car = list(filter(None, card_car))
-        for item in card_car:
-            if item['ID_card'] == card and item['L_Plate'] == license_plate:
-                print('Mời bạn ra')
-                return
-        print('Mời bạn cút vào trong')
 
     def check_card_license_plate(self, card, license_plate):
         # Kiểm tra xem giá trị của card và license_plate có trùng với giá trị của khóa ID_card và L_Plate trong cột card_car hay không
@@ -162,18 +150,19 @@ class database:
                 time_in = datetime.strptime(time_in, "%Y-%m-%d %H:%M:%S")
                 time_out = datetime.strptime(time_out, "%Y-%m-%d %H:%M:%S")
                 time = time_out - time_in
-                print("Vào lúc : ",time_in)
-                print("Thời gian thuê từ trước : ", period , "h")
+                # print("Vào lúc : ",time_in)
+                # print("Thời gian thuê từ trước : ", period , "h")
                 hour = time.total_seconds() / 3600
                 check = hour - period
                 fee = check * 3000
-                print("Thời gian lấy xe bị lố (h) : ",check,"h")
-                if check <= 0 : # Lấy sớm
-                    print('Mời bạn ra')
+                if check == 0 : # Lấy sớm
+                    return str('Mời bạn ra'), check
+                elif check < 0:
+                    check = -check;
+                    return str(f'Mời bạn ra và bạn còn {check}h'), -check
                 else : # Lấy muộn
-                    print('Mời bạn ra , nhưng bạn cần đóng thêm ',fee, " VND tiền phí")
-                return
-        print('Mời bạn cút vào trong')
+                    return str('Mời bạn ra!\n Bạn bị quá giờ nên đóng thêm ' + str(fee) + " VND tiền phí"), check
+        return str('Không hợp lệ!!'), None
 
     def get_car_info1(self, L_Plate):
         lp_car = self.fb.get('/L_Plate', '')
@@ -190,3 +179,24 @@ class database:
     def save_account(self,acc_number,tk,mk,role):
         login = 'Login'
         self.fb.put(login, f"acc-{acc_number}", {'username': tk, 'password': mk, 'role': role})
+
+    def set_Plate(self,car_card):
+            data = self.fb.get('/card_car','')
+            data = list(filter(None, data))
+            id = None
+            for item in data:
+                if item['ID_card'] == car_card:
+                    id = item['Id']
+                    break
+            if id is not None:
+                self.fb.put('/card_car', id, {'ID_card': car_card, 'Id': id, 'L_Plate': ""})
+
+    def get_Plate(self,car_card):
+        data = self.fb.get('/card_car','')
+        data = list(filter(None, data))
+        lp = ""
+        for item in data:
+            if item['ID_card'] == car_card:
+                lp = item['L_Plate']
+                break
+        return lp

@@ -69,6 +69,4 @@ class Price:
         self.db.fb.put('/','Price_List', data)
         messagebox.showinfo("Success", " Sửa thành công \U0001F604 ")
         self.root.destroy()
-# root = tk.Tk()
-# app = Price(root)
-# root.mainloop()
+
