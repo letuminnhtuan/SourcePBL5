@@ -1,4 +1,5 @@
 import math
+import pandas as pd
 
 # license plate type classification helper function
 def linear_equation(x1, y1, x2, y2):
@@ -11,11 +12,31 @@ def check_point_linear(x, y, x1, y1, x2, y2):
     y_pred = a*x+b
     return(math.isclose(y_pred, y, abs_tol = 3))
 
+def convert(result):
+    boxes = result[0].boxes
+
+    xyxy = pd.DataFrame(boxes.xyxy.cpu().numpy(), columns=['xmin', 'ymin', 'xmax', 'ymax'])
+    conf = pd.DataFrame(boxes.conf.cpu().numpy(), columns=['confidence'])
+    cls = pd.DataFrame(boxes.cls.cpu().numpy(), columns=['class'])
+
+    result = pd.concat([xyxy, conf, cls], axis=1)
+
+    names = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 
+            'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 
+            'U', 'V', 'W', 'X', 'Y', 'Z']
+    label_map = {i: name for i, name in enumerate(names)}
+    result['name'] = result['class'].map(label_map)
+
+    return result.values.tolist()
+
 # detect character and number in license plate
 def read_plate(yolo_license_plate, im):
     LP_type = "1"
-    results = yolo_license_plate(im)
-    bb_list = results.pandas().xyxy[0].values.tolist()
+    results = yolo_license_plate(im, device = 0)
+    # bb_list = results.pandas().xyxy[0].values.tolist()
+    # print(len(bb_list))
+    bb_list = convert(results)
     if len(bb_list) == 0 or len(bb_list) < 7 or len(bb_list) > 10:
         return "unknown"
     center_list = []
@@ -39,10 +60,7 @@ def read_plate(yolo_license_plate, im):
         if l_point[0] != r_point[0]:
             if (check_point_linear(ct[0], ct[1], l_point[0], l_point[1], r_point[0], r_point[1]) == False):
                 LP_type = "2"
-
     y_mean = int(int(y_sum) / len(bb_list))
-    size = results.pandas().s
-
     # 1 line plates and 2 line plates
     line_1 = []
     line_2 = []

@@ -253,7 +253,7 @@ class regis:
                         "ID": id1,
                         "ID_owner": id_owner,
                         "Time-register": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                        "Period-time": float(period_time[:-1]),
+                        "Period-time": period_time,
                         "Total-money": total_money_string
                     }
                     customer = {

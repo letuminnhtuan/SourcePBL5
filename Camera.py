@@ -8,6 +8,9 @@ from Dashboard import db
 from Firebase import database
 from Register import regis
 from XuLi import *
+import time
+import customtkinter
+
 class QL_Camera:
     def __init__(self, master):
         self.root = master
@@ -50,8 +53,8 @@ class QL_Camera:
         icon_label2 = Label(self.frame_right, image=self.icon_image1, bg="white")
         icon_label2.place(x=220, y=0)
         # Title
-        label_xe_vao = Label(self.frame_left, text="Xe vào", font=("Helvetica", 30, "bold"), fg="gray",bg="white").place(x=350, y=40, width=90, height=50)
-        label_xe_ra = Label(self.frame_right, text="Xe ra", font=("Helvetica", 30, "bold"), fg="gray",bg="white").place(x=350, y=40, width=90, height=50)
+        label_xe_vao = Label(self.frame_left, text="Xe vào", font=("Helvetica", 30, "bold"), fg="gray",bg="white").place(x=320, y=40, width=130, height=50)
+        label_xe_ra = Label(self.frame_right, text="Xe ra", font=("Helvetica", 30, "bold"), fg="gray",bg="white").place(x=340, y=40, width=100, height=50)
 
         # Thêm Label để hiển thị hình ảnh từ camera trái
         self.label_camera_left = tk.Label(self.frame_left,width=650,height=430,bg="white")
@@ -81,7 +84,44 @@ class QL_Camera:
 
         data_thread = threading.Thread(target=self.data_handler, args=(arData, self.cap_left, self.cap_right,))
         data_thread.start()
-        
+
+        button_open_vao = customtkinter.CTkButton(
+            master=self.frame_left,
+            command=self.open_vao,
+            text="Mở cổng vào",
+            font=("Helvetica", 20, "bold"),
+            text_color="white",
+            hover=True,
+            hover_color="#6fb9d5",
+            height=55,
+            width=160,
+            border_width=2,
+            corner_radius=20,
+            border_color="#528aa0",
+            fg_color="#6162FF").place(x = 300 , y = 700)
+        button_open_ra = customtkinter.CTkButton(
+            master=self.frame_right,
+            command=self.open_ra,
+            text="Mở cổng ra",
+            font=("Helvetica", 20, "bold"),
+            text_color="white",
+            hover=True,
+            hover_color="#6fb9d5",
+            height=55,
+            width=160,
+            border_width=2,
+            corner_radius=20,
+            border_color="#528aa0",
+            fg_color="#6162FF").place(x=330, y=700)
+    
+    def open_vao(self):
+        SendData('6')
+        time.sleep(.1)
+
+    def open_ra(self):
+        SendData('5')
+        time.sleep(.1)
+
     # Hàm cập nhật camera xe vào lên giao điện
     def update_camera_left(self):
         # data_thread = threading.Thread(target=self.data_handler_in, args=(arData, self.cap_left,))
@@ -145,9 +185,11 @@ class QL_Camera:
                         messagebox.showinfo("Thông báo", mess)
                         if(mess != 'Không hợp lệ!!'):
                             SendData('3')
+                        else:
+                            SendData('2')
                     else:
                         SendData('2')
-                time.sleep(1)
+                time.sleep(.5)
     # Hàm chuyển sang trang Quản lí
     def tranfer_DB(self):
         self.open_new_DB()
@@ -162,9 +204,3 @@ class QL_Camera:
     def open_new_Regis(self, plate):
         self.new_window = Toplevel(self.root)
         self.app = regis(plate, self.new_window)
-    # def tranfer_Login(self):
-    #     self.open_new_Login()
-    # def open_new_Login(self):
-    #     from App import Login
-    #     self.new_window = Toplevel(self.root)
-    #     self.app = Login(self.new_window)

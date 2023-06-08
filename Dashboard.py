@@ -5,10 +5,11 @@ from PIL import ImageTk
 from Car import car
 from Account_Client import Account
 from Price_List import Price
+from DoanhThu import dt
 class db:
     def __init__(self, root):
         self.root = root
-        self.root.title("Quản lí")
+        self.root.title("Dashboard")
         self.root.geometry("1199x600+100+50")
         self.root.resizable(False, False)
         self.root.title("Danh mục quản lí")
@@ -50,7 +51,7 @@ class db:
         icon_label2 = Label(Frame_dashboard, image=self.icon_image4, bg="white")
         icon_label2.place(x=960, y=95)
         logout = Button(Frame_dashboard, text="Thoát", bd=0, font=("Helvetica", 15),bg="#6162FF", fg="white", command=self.logout_function).place(x=1050, y=30, width=100, height=40)
-        form = Label(Frame_dashboard, text="", font=("Arial", 20), bg="white", bd=2, highlightthickness=2,highlightbackground="gray").place(x=100, y=200, width=980, height=300)
+        form = Label(Frame_dashboard, text="", font=("Helvetica", 20), bg="white", bd=2, highlightthickness=2,highlightbackground="gray").place(x=100, y=200, width=980, height=300)
         style = ttk.Style()
         style.map("TButton", foreground=[('active', '#6162FF')], background=[('active', 'gray')])
         style.configure("TButton", padding=6, relief="flat", font=("Helvetica", 15), background="#6162FF",
@@ -62,13 +63,13 @@ class db:
         style.configure("TButton", bordercolor="none", focuscolor="none", borderwidth=0, relief="flat",
                         background="#6162FF", foreground="orange", padding=6, borderradius=80)
         # Button quản lí doanh thu
-        ttk.Button(Frame_dashboard, text="Quản lí doanh thu").place(x=130, y=220,width=200, height=40)
+        ttk.Button(Frame_dashboard, text="Quản lí doanh thu", command=self.transfer_DoanhThu).place(x=130, y=220,width=200, height=40)
         # Button quản lí client
         ttk.Button(Frame_dashboard, text="Quản lí tài khoản",command=self.tranfer_Client).place(x=530, y=220, width=200, height=40)
         # Button quản lí xe
-        ttk.Button(Frame_dashboard,text="Quản lí xe",command=self.tranfer_QLcar).place(x=880, y=220, width=160, height=40)
+        ttk.Button(Frame_dashboard,text="Quản lí ra vào",command=self.tranfer_QLcar).place(x=880, y=220, width=200, height=40)
         # Button quản lí PriceList
-        ttk.Button(Frame_dashboard, text="Quản lí giá tiền", command=self.tranfer_Price).place(x=530, y=320, width=200, height=40)
+        ttk.Button(Frame_dashboard, text="Quản lí bảng giá", command=self.tranfer_Price).place(x=530, y=320, width=200, height=40)
     # Chuyển sang trang quản lí xe đăng kí
     def tranfer_QLcar(self):
         self.open_new_QLcar()
@@ -86,6 +87,11 @@ class db:
     def open_new_Price(self):
         self.new_window = Toplevel(self.root)
         self.app = Price(self.new_window)
+    def transfer_DoanhThu(self):
+        self.open_DoanhThu()
+    def open_DoanhThu(self):
+        self.new_window = Toplevel(self.root)
+        self.app = dt(self.new_window)
     def logout_function(self):
         self.root.destroy()
 

@@ -146,6 +146,7 @@ class database:
             if item['ID_card'] == card and item['L_Plate'] == license_plate:
                 time_in = self.get_car_info1(license_plate)[0]
                 period = self.get_car_info1(license_plate)[1]
+                print(period)
                 period = float(period.replace('h',''))
                 time_in = datetime.strptime(time_in, "%Y-%m-%d %H:%M:%S")
                 time_out = datetime.strptime(time_out, "%Y-%m-%d %H:%M:%S")

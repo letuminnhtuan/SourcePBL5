@@ -105,16 +105,10 @@ void Check(){
           Serial.println("OUT");
           delay(1000);
           Serial.println(message);
-          // Gửi tín hiệu chụp ảnh và nhận diện
-          // Serial.print("2");
-          // Nhận lại tín hiệu
           while(Serial.available() == 0){}
           char incomingByte = Serial.read();
           // kiểm tra tín hiệu
           if (incomingByte == '3'){
-            // digitalWrite(9, HIGH);
-            // delay(1000);
-            // digitalWrite(9, LOW);
             servo_out.write(open);
             delay(3000);
             servo_out.write(close);
@@ -127,6 +121,22 @@ void Check(){
   delay(1000);
 }
 
+void Open_Close(){
+  if(Serial.available() != 0){
+    char incomingByte = Serial.read();
+    if (incomingByte == '5'){
+      servo_out.write(open);
+      delay(3000);
+      servo_out.write(close);
+    }
+    if (incomingByte == '6'){
+      servo_in.write(open);
+      delay(3000);
+      servo_in.write(close);
+    }
+  }
+}
+
 void setup() {
   SetUpGate();
   Serial.begin(9600);
@@ -134,6 +144,7 @@ void setup() {
 
 void loop() {
   Check();
+  Open_Close();
 }
 
 
