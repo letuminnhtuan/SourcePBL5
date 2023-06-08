@@ -39,22 +39,22 @@ class Login:
             if found:
                 if user_role == "1":
                     self.open_new_screen_manager()
-                    self.username.insert(0,"")
-                    self.password.insert(0,"")
                 else:
                     self.open_new_screen_client()
-                    self.username.insert(0,"")
-                    self.password.insert(0,"")
             else:
                 messagebox.showerror("Error", "Tài khoảng hoặc mật khẩu không hợp lệ", parent=self.root)
     def open_new_screen_manager(self):
         # self.root.withdraw()  # Ẩn cửa sổ hi1ện tại
         self.new_window = Toplevel(self.root)
         self.app = QL_Camera(self.new_window)
+        self.username.delete(0, END)
+        self.password.delete(0, END)
     def open_new_screen_client(self):
         # self.root.withdraw()  # Ẩn cửa sổ hi1ện tại
         self.new_window = Toplevel(self.root)
         self.app = camera_client(self.new_window)
+        self.username.delete(0, END)
+        self.password.delete(0, END)
 
 root = Tk()
 obj = Login(root)

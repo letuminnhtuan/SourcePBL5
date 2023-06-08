@@ -248,7 +248,7 @@ class dt:
         ax.bar(df['Name'], df['Total Money'])
         ax.set_xlabel('Name')
         ax.set_ylabel('Total Money (VND)')
-        ax.set_title('Top 5 Users with Highest Total Money', fontsize=12)
+        ax.set_title('Top 5 khách hàng có tổng tiền nhiều nhất', fontsize=12)
         ax.grid(True)
 
         canvas = FigureCanvasTkAgg(fig, master=self.right_frame)

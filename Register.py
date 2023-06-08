@@ -16,13 +16,13 @@ class regis:
         text_font = ctk.CTkFont(family="Helvetica",size=17)
         # Kết nối đến Firebase
         self.db = database()
-        self.Thongtin = ctk.CTkLabel(self.root,text="Information",font=("Helvetica", 30),height=40,
+        self.Thongtin = ctk.CTkLabel(self.root,text="Thông tin khách hàng",font=("Helvetica", 30),height=40,
             width=320).place(x = 50 , y = 20 )
-        self.Regis = ctk.CTkLabel(self.root,text="Register",font=("Helvetica", 30),height=40,
+        self.Regis = ctk.CTkLabel(self.root,text="Đăng kí gửi xe",font=("Helvetica", 30),height=40,
             width=320).place(x = 530 , y = 20 )
 
-        self.ten_chu = ctk.CTkLabel(self.root,text="Name",font=("Helvetica", 15)).place(x = 30,y = 100 )
-        self.ten_chu_entry = ctk.CTkEntry(self.root,placeholder_text="Name",corner_radius=10,border_color="#FF9999",height=35,width=200)
+        self.ten_chu = ctk.CTkLabel(self.root,text="Tên",font=("Helvetica", 15)).place(x = 30,y = 100 )
+        self.ten_chu_entry = ctk.CTkEntry(self.root,placeholder_text="Tên",corner_radius=10,border_color="#FF9999",height=35,width=200)
         self.ten_chu_entry.place(x = 130,y = 100 )
 
         self.id = ctk.CTkLabel(self.root,text="ID",font=("Helvetica", 15)).place(x = 30 , y = 150 )
@@ -37,20 +37,20 @@ class regis:
         self.cccd_entry = ctk.CTkEntry(self.root,placeholder_text="CCCD",corner_radius=10,border_color="#FF9999",height=35,width=200)
         self.cccd_entry.place(x = 130,y = 250 )
 
-        self.bs = ctk.CTkLabel(self.root,text="L_Plate",font=("Helvetica", 15)).place(x = 30,y = 300 )
-        self.bien_so_entry = ctk.CTkEntry(self.root,placeholder_text="L_Plate",corner_radius=10,border_color="#FF9999",height=35,width=200)
+        self.bs = ctk.CTkLabel(self.root,text="Biển số xe",font=("Helvetica", 15)).place(x = 30,y = 300 )
+        self.bien_so_entry = ctk.CTkEntry(self.root,placeholder_text="Biển số xe",corner_radius=10,border_color="#FF9999",height=35,width=200)
         self.bien_so_entry.place(x=130, y=300)
 
         self.price_frame = ctk.CTkFrame(self.root,border_color="#FF99FF",fg_color="#EEEEEE",border_width=3,corner_radius=20,width=270 ,height=150).place(x=400,y=100)
         #Gender Radio Buttons
         self.time_var = tk.StringVar(value="")
-        self.hour_radio = ctk.CTkRadioButton(master=self.root,text="Hour",variable=self.time_var, value="Giờ",radiobutton_height=30,radiobutton_width=30).place(x=420,y=120)
+        self.hour_radio = ctk.CTkRadioButton(master=self.root,text="Giờ",variable=self.time_var, value="Giờ",radiobutton_height=30,radiobutton_width=30).place(x=420,y=120)
 
-        self.day_radio = ctk.CTkRadioButton(self.root,text="Day",variable=self.time_var,width=70,value="Ngày",radiobutton_height=30,radiobutton_width=30).place(x=560,y=120)
+        self.day_radio = ctk.CTkRadioButton(self.root,text="Ngày",variable=self.time_var,width=70,value="Ngày",radiobutton_height=30,radiobutton_width=30).place(x=560,y=120)
 
-        self.week_radio = ctk.CTkRadioButton(self.root,text="Week",variable=self.time_var,value="Tuần",radiobutton_height=30,radiobutton_width=30).place(x=420,y=200)
+        self.week_radio = ctk.CTkRadioButton(self.root,text="Tuần",variable=self.time_var,value="Tuần",radiobutton_height=30,radiobutton_width=30).place(x=420,y=200)
 
-        self.month_radio = ctk.CTkRadioButton(self.root,text="Month",variable=self.time_var,width=70,value="Tháng",radiobutton_height=30,radiobutton_width=30).place(x=560,y=200)
+        self.month_radio = ctk.CTkRadioButton(self.root,text="Tháng",variable=self.time_var,width=70,value="Tháng",radiobutton_height=30,radiobutton_width=30).place(x=560,y=200)
 
         # Thanh toán
         self.thanhtoan = ctk.CTkFrame(self.root, border_color="#FF99FF", fg_color="#EEEEEE", border_width=3,
@@ -58,14 +58,14 @@ class regis:
         self.quantity_entry = ctk.CTkEntry(self.root, placeholder_text="Quantity", corner_radius=10, border_color="#FF9999",
                                       width=220)
         self.quantity_entry.place(x=420, y=300)
-        self.btn_client = ctk.CTkButton(master=self.root,text="Pay", command=self.calculate_total,font=("Helvetica", 15),text_color="white",hover=True,hover_color="#e06a61",
+        self.btn_client = ctk.CTkButton(master=self.root,text="Thanh toán", command=self.calculate_total,font=("Helvetica", 15),text_color="white",hover=True,hover_color="#e06a61",
             height=40,width=120,border_width=2,corner_radius=20,border_color="#9e4a43",fg_color="#FF6666").place(x=470, y=345)
         self.total_entry = ctk.CTkTextbox(self.root,font=text_font, width=220,border_color="#FF9999", border_width=1,height=50,corner_radius=20)
         self.total_entry.place(x=420,y=400)
         # Bảng giá
         self.thanhtoan = ctk.CTkFrame(self.root, border_color="#33FFFF", fg_color="#EEEEEE", border_width=3,
                                       corner_radius=20, width=220, height=380).place(x=700, y=100)
-        label = ctk.CTkLabel(master=self.root,text="Price List",width=140,height=45,fg_color="#FF99FF",font=text_font,corner_radius=10)
+        label = ctk.CTkLabel(master=self.root,text="Bảng giá",width=140,height=45,fg_color="#FF99FF",font=text_font,corner_radius=10)
         label.place(x=742,y=115)
         data = self.db.get_price_list()
         data = list(filter(None, data))
@@ -75,7 +75,7 @@ class regis:
 
             # Kiểm tra loại và gán giá trị vào entry tương ứng
             if type == 'Giờ':
-                self.label_hour = ctk.CTkLabel(self.root, text="Hour", font=text_font).place(x=720, y=200)
+                self.label_hour = ctk.CTkLabel(self.root, text="Giờ", font=text_font).place(x=720, y=200)
                 self.entry_hour_value = price
                 self.entry_hour = ctk.CTkEntry(self.root, font=text_font, corner_radius=15, border_color="#3399FF",
                                                width=120)
@@ -83,7 +83,7 @@ class regis:
                 self.entry_hour.place(x=775, y=200)
                 self.entry_hour.configure(state='readonly')
             elif type == 'Ngày':
-                self.label_day = ctk.CTkLabel(self.root, text="Day", font=text_font).place(x=720, y=260)
+                self.label_day = ctk.CTkLabel(self.root, text="Ngày", font=text_font).place(x=720, y=260)
                 self.entry_day_value = price
                 self.entry_day = ctk.CTkEntry(self.root, font=text_font, corner_radius=15, border_color="#3399FF",
                                               width=120)
@@ -91,7 +91,7 @@ class regis:
                 self.entry_day.place(x=775, y=260)
                 self.entry_day.configure(state='readonly')
             elif type == 'Tuần':
-                self.label_day = ctk.CTkLabel(self.root, text="Week", font=text_font).place(x=720, y=320)
+                self.label_day = ctk.CTkLabel(self.root, text="Tuần", font=text_font).place(x=720, y=320)
                 self.entry_week_value = price
                 self.entry_week = ctk.CTkEntry(self.root, font=text_font, corner_radius=15, border_color="#3399FF",
                                                width=120)
@@ -99,7 +99,7 @@ class regis:
                 self.entry_week.place(x=775, y=320)
                 self.entry_week.configure(state='readonly')
             elif type == 'Tháng':
-                self.label_day = ctk.CTkLabel(self.root, text="Month", font=text_font).place(x=720, y=380)
+                self.label_day = ctk.CTkLabel(self.root, text="Tháng", font=text_font).place(x=720, y=380)
                 self.entry_month_value = price
                 self.entry_month = ctk.CTkEntry(self.root, font=text_font, corner_radius=15, border_color="#3399FF",
                                                 width=120)

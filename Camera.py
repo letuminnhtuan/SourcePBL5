@@ -7,7 +7,7 @@ import tkinter as tk
 from Dashboard import db
 from Firebase import database
 from Register import regis
-from XuLi import *
+from Handle import *
 import time
 import customtkinter
 
@@ -197,8 +197,7 @@ class QL_Camera:
         self.new_window = Toplevel(self.root)
         self.app = db(self.new_window)
     def logout_function(self):
-        self.root.destroy()
-        # self.tranfer_Login()
+        self.root.withdraw()
     def tranfer_Regis(self, plate):
         self.open_new_Regis(plate)
     def open_new_Regis(self, plate):

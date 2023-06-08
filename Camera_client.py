@@ -7,7 +7,9 @@ import tkinter as tk
 from Dashboard import db
 from Firebase import database
 from Register import regis
-from XuLi import *
+from Handle import *
+import customtkinter
+import time
 class camera_client:
     def __init__(self, root):
         self.root = root
@@ -75,7 +77,44 @@ class camera_client:
 
         data_thread = threading.Thread(target=self.data_handler, args=(arData, self.cap_left, self.cap_right,))
         data_thread.start()
+
+        button_open_vao = customtkinter.CTkButton(
+            master=self.frame_left,
+            command=self.open_vao,
+            text="Mở cổng vào",
+            font=("Helvetica", 20, "bold"),
+            text_color="white",
+            hover=True,
+            hover_color="#6fb9d5",
+            height=55,
+            width=160,
+            border_width=2,
+            corner_radius=20,
+            border_color="#528aa0",
+            fg_color="#6162FF").place(x = 300 , y = 700)
+        button_open_ra = customtkinter.CTkButton(
+            master=self.frame_right,
+            command=self.open_ra,
+            text="Mở cổng ra",
+            font=("Helvetica", 20, "bold"),
+            text_color="white",
+            hover=True,
+            hover_color="#6fb9d5",
+            height=55,
+            width=160,
+            border_width=2,
+            corner_radius=20,
+            border_color="#528aa0",
+            fg_color="#6162FF").place(x=330, y=700)
         
+    def open_vao(self):
+        SendData('6')
+        time.sleep(.1)
+
+    def open_ra(self):
+        SendData('5')
+        time.sleep(.1)
+
     def update_camera_left(self):
         while True:
             # Lấy hình ảnh từ camera
@@ -135,9 +174,11 @@ class camera_client:
                         messagebox.showinfo("Thông báo", mess)
                         if(mess != 'Không hợp lệ!!'):
                             SendData('3')
+                        else:
+                            SendData('2')
                     else:
                         SendData('2')
-                time.sleep(1)
+                time.sleep(.5)
     def logout_function(self):
-        self.root.destroy()
+        self.root.withdraw()
 

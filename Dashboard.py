@@ -5,7 +5,7 @@ from PIL import ImageTk
 from Car import car
 from Account_Client import Account
 from Price_List import Price
-from DoanhThu import dt
+from Revenue import dt
 class db:
     def __init__(self, root):
         self.root = root
